@@ -1,8 +1,8 @@
-package teamcode.robot.subsystems;
+package org.firstinspires.ftc.teamcode.robot.subsystems;
 
-import static teamcode.utils.constants.BotConstants.wristIntake;
-import static teamcode.utils.constants.BotConstants.wristSample;
-import static teamcode.utils.constants.BotConstants.wristSpecDepo;
+import static org.firstinspires.ftc.teamcode.utils.constants.BotConstants.wristIntake;
+import static org.firstinspires.ftc.teamcode.utils.constants.BotConstants.wristSample;
+import static org.firstinspires.ftc.teamcode.utils.constants.BotConstants.wristSpecDepo;
 
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.Servo;

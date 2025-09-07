@@ -1,8 +1,8 @@
-package teamcode.robot.subsystems;
+package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.Servo;
-import static teamcode.utils.constants.BotConstants.*;
+import static org.firstinspires.ftc.teamcode.utils.constants.BotConstants.*;
 
 public class Turret implements Subsystem {
     public Servo turret;

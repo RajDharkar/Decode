@@ -1,8 +1,8 @@
-package teamcode.robot.commands.subsystemcommands;
+package org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 
 public class ExtendTo extends CommandBase {
     public Robot robot;

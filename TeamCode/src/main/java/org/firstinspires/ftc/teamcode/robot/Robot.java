@@ -1,4 +1,4 @@
-package teamcode.robot;
+package org.firstinspires.ftc.teamcode.robot;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -11,14 +11,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.List;
 
-import teamcode.pedroPathing.constants.FConstants;
-import teamcode.pedroPathing.constants.LConstants;
-import teamcode.robot.subsystems.Turret;
-import teamcode.robot.subsystems.BoxtubeExtension;
-import teamcode.robot.subsystems.BoxtubePivot;
-import teamcode.robot.subsystems.Claw;
-import teamcode.robot.subsystems.Wrist;
-import teamcode.utils.MyTelem;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.robot.subsystems.BoxtubeExtension;
+import org.firstinspires.ftc.teamcode.robot.subsystems.BoxtubePivot;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 @Config
 public class Robot {

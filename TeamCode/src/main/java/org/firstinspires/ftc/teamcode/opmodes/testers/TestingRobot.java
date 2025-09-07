@@ -1,11 +1,11 @@
-package teamcode.opmodes.testers;
+package org.firstinspires.ftc.teamcode.opmodes.testers;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import teamcode.robot.Robot;
-import teamcode.utils.MyTelem;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 @TeleOp
 public class TestingRobot extends LinearOpMode {

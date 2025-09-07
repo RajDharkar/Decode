@@ -1,4 +1,4 @@
-package teamcode.robot.subsystems;
+package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
-import teamcode.utils.MyTelem;
+import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 @Config
 public class BoxtubePivot implements Subsystem {

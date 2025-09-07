@@ -1,10 +1,10 @@
-package teamcode.robot.commands.subsystemcommands;
+package org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
-import teamcode.robot.Robot;
-import teamcode.robot.subsystems.Turret;
-import teamcode.robot.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Wrist;
 
 public class WristTo extends InstantCommand {
     public WristTo(Robot robot, Wrist.WristState state){

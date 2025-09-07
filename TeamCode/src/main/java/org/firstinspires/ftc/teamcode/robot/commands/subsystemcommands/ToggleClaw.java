@@ -1,12 +1,12 @@
-package teamcode.robot.commands.subsystemcommands;
+package org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands;
 
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 
 import org.firstinspires.inspection.InspectionActivity;
 
-import teamcode.robot.Robot;
-import teamcode.robot.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Claw;
 
 public class ToggleClaw extends ConditionalCommand {
     public ToggleClaw(Robot robot){

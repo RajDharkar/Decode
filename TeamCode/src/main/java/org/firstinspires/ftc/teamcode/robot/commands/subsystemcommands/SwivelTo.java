@@ -1,9 +1,9 @@
-package teamcode.robot.commands.subsystemcommands;
+package org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
-import teamcode.robot.Robot;
-import teamcode.robot.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Claw;
 
 public class SwivelTo extends InstantCommand {
     public SwivelTo(Robot robot, Claw.SwivelState state){

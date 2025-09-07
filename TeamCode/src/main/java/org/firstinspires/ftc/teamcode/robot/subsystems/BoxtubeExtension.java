@@ -1,4 +1,4 @@
-package teamcode.robot.subsystems;
+package org.firstinspires.ftc.teamcode.robot.subsystems;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.AMPS;
 
@@ -8,7 +8,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import teamcode.utils.MyTelem;
+import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 @Config
 public class BoxtubeExtension implements Subsystem {

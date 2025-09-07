@@ -1,4 +1,4 @@
-package teamcode.pedroPathing.VisionPractice;
+package org.firstinspires.ftc.teamcode.pedroPathing.VisionPractice;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

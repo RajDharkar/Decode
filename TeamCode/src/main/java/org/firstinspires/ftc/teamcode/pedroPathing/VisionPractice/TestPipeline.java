@@ -1,4 +1,4 @@
-package teamcode.pedroPathing.VisionPractice;
+package org.firstinspires.ftc.teamcode.pedroPathing.VisionPractice;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
