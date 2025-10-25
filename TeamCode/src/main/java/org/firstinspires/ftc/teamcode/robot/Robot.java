@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.robot.subsystems.RollUp;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 import java.util.List;
@@ -22,13 +24,12 @@ public class Robot {
     public Follower follower;
 
     // hardware stuff, servos, motors, etc.
-    DcMotorEx backLeft, backRight, frontLeft, frontRight;
-    DcMotorEx topShooter, bottomShooter;
-    DcMotorEx rollUp;
-    DcMotorEx intake;
+    DcMotorEx backLeftMotor, backRightMotor, frontLeftMotor, frontRightMotor;
+    DcMotorEx topShooterMotor, bottomShooterMotor;
+    DcMotorEx rollUpMotor; RollUp rollUp;
+    DcMotorEx intakeMotor; Intake intake;
 
     // all subsystem classes
-
     public List<LynxModule> hubs;
 
     public Robot (HardwareMap hm, boolean isAuto) {
@@ -37,21 +38,20 @@ public class Robot {
         follower = new Follower(hm, FConstants.class, LConstants.class);
         follower.breakFollowing();
 
-        topShooter = hardwareMap.get(DcMotorEx.class, "topShooter");
-        bottomShooter = hardwareMap.get(DcMotorEx.class, "bottomShooter");
+        topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
+        bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
 
-        rollUp = hardwareMap.get(DcMotorEx.class, "rollUp");
-
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
+        rollUpMotor = hm.get(DcMotorEx.class, "rollUp");
+        intakeMotor = hm.get(DcMotorEx.class, "intake");
         //declare all hardware names
 
-        //ie. name = hardwareMap.get(Servo.class, "...");
+        //ie. name = hm.get(Servo.class, "...");
 
         // We can in pedro for this as well.
-        //        backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
-        //        backRight = hardwareMap.get(DcMotorEx.class, "backRight");
-        //        frontLeft = hardwareMap.get(DcMotorEx.class, "frontRight");
-        //        frontRight = hardwareMap.get(DcMotorEx.class, "frontLeft");
+        //        backLeft = hm.get(DcMotorEx.class, "backLeft");
+        //        backRight = hm.get(DcMotorEx.class, "backRight");
+        //        frontLeft = hm.get(DcMotorEx.class, "frontRight");
+        //        frontRight = hm.get(DcMotorEx.class, "frontLeft");
 
 
         //handle auto specific behaviors
@@ -63,9 +63,11 @@ public class Robot {
 
         //declare all subsystem objects
         //ie. turret = new Turret()
+        intake = new Intake(intakeMotor);
+        rollUp = new RollUp(rollUpMotor);
 
         //register subsystems
-        //CommandScheduler.getInstance().register()
+        CommandScheduler.getInstance().registerSubsystem(intake);
 
         hubs = hm.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
@@ -85,10 +87,11 @@ public class Robot {
     }
 
     public void stop(){
+        CommandScheduler.getInstance().reset();
+
         for(LynxModule hub : hubs){
             hub.clearBulkCache();
         }
-        CommandScheduler.getInstance().reset();
     }
 
 }
