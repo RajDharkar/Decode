@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.robot.subsystems.RollUp;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 import java.util.List;
@@ -26,7 +25,6 @@ public class Robot {
     // hardware stuff, servos, motors, etc.
     DcMotorEx backLeftMotor, backRightMotor, frontLeftMotor, frontRightMotor;
     DcMotorEx topShooterMotor, bottomShooterMotor;
-    DcMotorEx rollUpMotor; RollUp rollUp;
     DcMotorEx intakeMotor; Intake intake;
 
     // all subsystem classes
@@ -40,8 +38,6 @@ public class Robot {
 
         topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
         bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
-
-        rollUpMotor = hm.get(DcMotorEx.class, "rollUp");
         intakeMotor = hm.get(DcMotorEx.class, "intake");
         //declare all hardware names
 
@@ -64,7 +60,6 @@ public class Robot {
         //declare all subsystem objects
         //ie. turret = new Turret()
         intake = new Intake(intakeMotor);
-        rollUp = new RollUp(rollUpMotor);
 
         //register subsystems
         CommandScheduler.getInstance().registerSubsystem(intake);
