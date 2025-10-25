@@ -7,11 +7,13 @@ import org.firstinspires.ftc.teamcode.utils.constants.IntakeConstants;
 
 public class Intake implements Subsystem {
     DcMotorEx intakeMotor;
+    public IntakeState state;
     public Intake(DcMotorEx intakeMotor){
         this.intakeMotor = intakeMotor;
     }
 
     public void setState(IntakeState state){
+        this.state = state;
         switch (state){
             case ON:
                 intakeMotor.setPower(IntakeConstants.forwardPower);
@@ -27,7 +29,11 @@ public class Intake implements Subsystem {
                 break;
         }
     }
-    enum IntakeState{
+
+    public IntakeState getState(){
+        return state;
+    }
+    public enum IntakeState{
         ON, OFF, REV;
     }
 
