@@ -25,7 +25,7 @@ public class Robot {
     // hardware stuff, servos, motors, etc.
     DcMotorEx backLeftMotor, backRightMotor, frontLeftMotor, frontRightMotor;
     DcMotorEx topShooterMotor, bottomShooterMotor;
-    DcMotorEx intakeMotor; Intake intake;
+    DcMotorEx intakeMotor; public Intake intake;
 
     // all subsystem classes
     public List<LynxModule> hubs;
@@ -34,10 +34,10 @@ public class Robot {
         auto = isAuto;
 
         follower = new Follower(hm, FConstants.class, LConstants.class);
-        follower.breakFollowing();
+//        follower.breakFollowing();
 
-        topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
-        bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
+//        topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
+//        bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
         intakeMotor = hm.get(DcMotorEx.class, "intake");
         //declare all hardware names
 
