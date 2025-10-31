@@ -6,12 +6,15 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 import java.util.List;
@@ -25,7 +28,11 @@ public class Robot {
     // hardware stuff, servos, motors, etc.
     DcMotorEx backLeftMotor, backRightMotor, frontLeftMotor, frontRightMotor;
     DcMotorEx topShooterMotor, bottomShooterMotor;
-    DcMotorEx intakeMotor; public Intake intake;
+    DcMotorEx intakeMotor;
+    public Intake intake;
+    public Shooter shooter;
+    Servo hoodServo;
+
 
     // all subsystem classes
     public List<LynxModule> hubs;
@@ -36,11 +43,16 @@ public class Robot {
         follower = new Follower(hm, FConstants.class, LConstants.class);
 //        follower.breakFollowing();
 
-//        topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
-//        bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
+        topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
+        bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
         intakeMotor = hm.get(DcMotorEx.class, "intake");
+        hoodServo = hm.get(Servo.class, "hoodServo");
         //declare all hardware names
 
+        topShooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bottomShooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        topShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bottomShooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //ie. name = hm.get(Servo.class, "...");
 
         // We can in pedro for this as well.
@@ -60,9 +72,10 @@ public class Robot {
         //declare all subsystem objects
         //ie. turret = new Turret()
         intake = new Intake(intakeMotor);
+        shooter = new Shooter(topShooterMotor, bottomShooterMotor, hoodServo);
 
         //register subsystems
-        CommandScheduler.getInstance().registerSubsystem(intake);
+        CommandScheduler.getInstance().registerSubsystem(intake, shooter);
 
         hubs = hm.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
