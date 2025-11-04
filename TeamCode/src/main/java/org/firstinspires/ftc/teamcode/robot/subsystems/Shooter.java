@@ -8,14 +8,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.robot.calculations.ShooterCalculations;
 import org.firstinspires.ftc.teamcode.robot.calculations.ShooterInput;
+import org.firstinspires.ftc.teamcode.utils.constants.ShooterConstants;
 
 @Config
 public class Shooter implements Subsystem {
     DcMotorEx topShooter, bottomShooter;
     Servo hood;
-
-    public static double kf = 0, kp = 0, ki = 0, kd = 0;
-    PIDController rpmPID = new PIDController(kp, ki, kd);
+    PIDController rpmPID = new PIDController(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
 
     public ShooterState state;
     public Shooter(DcMotorEx topShooter, DcMotorEx bottomShooter, Servo hood){
@@ -31,13 +30,24 @@ public class Shooter implements Subsystem {
             return;
         }
         this.state = state;
+//        switch (state) {
+//            case SHOOTING:
+//                ShooterInput constants = ShooterCalculations.getHoodAndPower();
+//                setPIDPower(constants.getMotorRPM());
+//                setHood(constants.getHoodAngle());
+//            case STOP:
+//                setPIDPower(0);
+//        }
         switch (state) {
-            case SHOOTING:
-                ShooterInput constants = ShooterCalculations.getHoodAndPower();
-                setPIDPower(constants.getMotorRPM());
-                setHood(constants.getHoodAngle());
+            case CLOSE:
+                setPIDPower(ShooterConstants.closeShootRPM);
+                break;
+            case FAR:
+                setPIDPower(ShooterConstants.farShootRPM);
+                break;
             case STOP:
                 setPIDPower(0);
+                break;
         }
     }
 
@@ -48,7 +58,7 @@ public class Shooter implements Subsystem {
         double currentRPM = topShooter.getVelocity() + bottomShooter.getVelocity();
         currentRPM /= 2;
 
-        double power = rpmPID.calculate(targetRPM, currentRPM) + kf;
+        double power = rpmPID.calculate(targetRPM, currentRPM) + ShooterConstants.kf;
 
         topShooter.setPower(power);
         bottomShooter.setPower(power);
@@ -58,7 +68,15 @@ public class Shooter implements Subsystem {
         return rpmPID.atSetPoint();
     }
 
-    public enum ShooterState{
-        SHOOTING, STOP
+    public ShooterState getState(){
+        return state;
+    }
+
+//    public enum ShooterState{
+//        SHOOTING, STOP
+//    }
+
+    public enum ShooterState {
+        CLOSE, FAR, STOP
     }
 }
