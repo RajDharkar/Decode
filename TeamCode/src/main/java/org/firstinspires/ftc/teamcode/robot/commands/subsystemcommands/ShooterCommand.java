@@ -12,7 +12,7 @@ public class ShooterCommand extends SequentialCommandGroup {
     public ShooterCommand(Robot robot, Shooter.ShooterState state){
         addCommands(
                 new InstantCommand(() -> robot.shooter.setState(state)),
-                new WaitCommand(500)
+                new WaitCommand(200)
         );
     }
 }
