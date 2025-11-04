@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 import java.util.List;
@@ -29,16 +30,18 @@ public class Robot {
     DcMotorEx backLeftMotor, backRightMotor, frontLeftMotor, frontRightMotor;
     DcMotorEx topShooterMotor, bottomShooterMotor;
     DcMotorEx intakeMotor;
-    public Intake intake;
-    public Shooter shooter;
     Servo hoodServo;
-
+    Servo turretLeftServo, turretRightServo;
 
     // all subsystem classes
     public List<LynxModule> hubs;
+    public Intake intake;
+    public Shooter shooter;
+    public Turret turret;
 
     public Robot (HardwareMap hm, boolean isAuto) {
         auto = isAuto;
+
 
         follower = new Follower(hm, FConstants.class, LConstants.class);
 //        follower.breakFollowing();
@@ -46,7 +49,9 @@ public class Robot {
         topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
         bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
         intakeMotor = hm.get(DcMotorEx.class, "intake");
-        hoodServo = hm.get(Servo.class, "hoodServo");
+        turretLeftServo = hm.get(Servo.class, "turretLeftServo");
+        turretRightServo = hm.get(Servo.class, "turretRightServo");
+//        hoodServo = hm.get(Servo.class, "hoodServo");
         //declare all hardware names
 
         topShooterMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -73,6 +78,7 @@ public class Robot {
         //ie. turret = new Turret()
         intake = new Intake(intakeMotor);
         shooter = new Shooter(topShooterMotor, bottomShooterMotor, hoodServo);
+        turret = new Turret(turretLeftServo, turretRightServo);
 
         //register subsystems
         CommandScheduler.getInstance().registerSubsystem(intake, shooter);
