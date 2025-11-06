@@ -16,7 +16,7 @@ public class ServoTester extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         Servo servo = hardwareMap.get(Servo.class, hardwareMapName);
         double currentServoPos = servoPos;
-
+        waitForStart();
         while (opModeIsActive()){
             if (servoPos != currentServoPos){
                 servo.setPosition(servoPos);
