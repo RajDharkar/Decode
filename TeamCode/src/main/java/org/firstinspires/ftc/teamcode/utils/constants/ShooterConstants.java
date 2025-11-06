@@ -4,9 +4,11 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class ShooterConstants {
-    public static double closeShootRPM = 2000;
-    public static double farShootRPM = 6000;
-    public static double kf = 0, kp = 0, ki = 0, kd = 0;
+    public static double closeShootRPM = 1850; // 1800
+    public static double farShootRPM = 3000; //2.16k
+    public static double kf = 0.1, kp = 0.02, ki = 0, kd = 0.000001;
     public static double tuningTestingRPM = 0;
+    public static int TICKS_PER_REV = 28;
+    public static int MAX_RPM = 6000;
 
 }
