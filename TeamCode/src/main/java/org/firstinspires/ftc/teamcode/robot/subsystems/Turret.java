@@ -21,6 +21,9 @@ public class Turret implements Subsystem {
                 turretLeftServo.setPosition(TurretConstants.turretForwardPosition);
                 turretRightServo.setPosition(1 - TurretConstants.turretForwardPosition);
                 break;
+            case BACK:
+                turretLeftServo.setPosition(TurretConstants.turretBackPosition);
+                turretRightServo.setPosition(1 - TurretConstants.turretBackPosition);
             case MATH:
                 break;
         }
@@ -30,7 +33,7 @@ public class Turret implements Subsystem {
         return state;
     }
     public enum TurretState{
-        FRONT, MATH
+        FRONT, MATH, BACK
     }
 
 }
