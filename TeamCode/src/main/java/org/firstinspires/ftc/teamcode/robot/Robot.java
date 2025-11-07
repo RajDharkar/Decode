@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.har
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.localization.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,11 +45,14 @@ public class Robot {
     public Turret turret;
     public Kicker kicker;
 
+    public Pose currentPose = new Pose(0, 0, 0);
+    public boolean holding;
     public Robot (HardwareMap hm, boolean isAuto) {
+        CommandScheduler.getInstance().reset();
         auto = isAuto;
         follower = new Follower(hm, FConstants.class, LConstants.class);
 //        follower.breakFollowing();
-
+        currentPose = new Pose(0, 0,  0);
         topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
         bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
         intakeMotor = hm.get(DcMotorEx.class, "intake");
@@ -109,6 +113,9 @@ public class Robot {
         for(LynxModule hub : hubs){
             hub.clearBulkCache();
         }
+
+        if(!holding)
+            currentPose = follower.getPose();
         MyTelem.update();
     }
 
@@ -120,4 +127,15 @@ public class Robot {
         }
     }
 
+    public void holding(){
+        follower.holdPoint(currentPose);
+        holding = true;
+    }
+
+    public void stopHolding(){
+        follower.breakFollowing();
+        follower.startTeleopDrive();
+        follower.setMaxPower(1);
+        holding = false;
+    }
 }

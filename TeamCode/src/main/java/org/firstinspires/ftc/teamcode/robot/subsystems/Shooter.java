@@ -52,6 +52,10 @@ public class Shooter implements Subsystem {
             case TESTING:
                 setPIDPower(ShooterConstants.tuningTestingRPM);
                 break;
+            case REV:
+                topShooter.setPower(-0.5);
+                bottomShooter.setPower(-0.5);
+                break;
         }
     }
 
@@ -94,6 +98,6 @@ public class Shooter implements Subsystem {
     }
 
     public enum ShooterState {
-        CLOSE, FAR, STOP, TESTING
+        CLOSE, FAR, STOP, TESTING, REV
     }
 }

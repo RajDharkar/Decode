@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmodes.prod;
 
+import androidx.core.view.accessibility.AccessibilityViewCommand;
+
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -18,36 +23,68 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
-@TeleOp(name = "Teleop")
+@TeleOp(name = "Teleop", group = "Comp")
 public class Teleop extends LinearOpMode {
+    Pose currentPose = new Pose(0, 0, 0);
+
     @Override
     public void runOpMode() {
         MyTelem.init(telemetry);
-
         Robot robot = new Robot(hardwareMap, false);
-        robot.follower.setStartingPose(new Pose(0,0,0));
+        robot.follower.setStartingPose(currentPose);
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
 
-        gp1.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenReleased(new IntakeCommand(robot, Intake.IntakeState.OFF));
-        gp1.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new IntakeCommand(robot, Intake.IntakeState.REV));
-        gp1.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new IntakeCommand(robot, Intake.IntakeState.ON));
-        gp1.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenReleased(new IntakeCommand(robot, Intake.IntakeState.OFF));
+        gp2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenReleased(new IntakeCommand(robot, Intake.IntakeState.OFF));
+        gp2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new IntakeCommand(robot, Intake.IntakeState.REV));
+        gp2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new IntakeCommand(robot, Intake.IntakeState.ON));
+        gp2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenReleased(new IntakeCommand(robot, Intake.IntakeState.OFF));
 
-        Trigger rightTrig = new Trigger(() -> gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5);
-        Trigger leftTrig = new Trigger(() -> gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5);
+        Trigger rightTrig = new Trigger(() -> gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.5);
+        Trigger leftTrig = new Trigger(() -> gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5);
 
-        rightTrig.whenActive(new ShooterCommand(robot, Shooter.ShooterState.CLOSE));
-        leftTrig.whenActive(new ShooterCommand(robot, Shooter.ShooterState.FAR));
+        leftTrig.whenActive(new ShooterCommand(robot, Shooter.ShooterState.CLOSE));
+        rightTrig.whenActive(new ShooterCommand(robot, Shooter.ShooterState.FAR));
 
+        leftTrig.whenInactive(new ShooterCommand(robot, Shooter.ShooterState.STOP));
         rightTrig.whenInactive(new ShooterCommand(robot, Shooter.ShooterState.STOP));
-        leftTrig.whenActive(new ShooterCommand(robot, Shooter.ShooterState.STOP));
 
-        gp1.getGamepadButton(GamepadKeys.Button.B).whenPressed(new KickerCommand(robot, Kicker.KickerState.ON));
-        gp1.getGamepadButton(GamepadKeys.Button.B).whenReleased(new KickerCommand(robot, Kicker.KickerState.OFF));
+        gp2.getGamepadButton(GamepadKeys.Button.B).whenPressed(new KickerCommand(robot, Kicker.KickerState.ON));
+        gp2.getGamepadButton(GamepadKeys.Button.B).whenReleased(new KickerCommand(robot, Kicker.KickerState.OFF));
 
-        gp1.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new TurretCommand(robot, Turret.TurretState.FRONT));
-        gp1.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new TurretCommand(robot, Turret.TurretState.BACK));
+        gp2.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new TurretCommand(robot, Turret.TurretState.FRONT));
+        gp2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new TurretCommand(robot, Turret.TurretState.BACK));
+
+        gp2.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                new ParallelCommandGroup(
+                        new KickerCommand(robot, Kicker.KickerState.ON),
+                        new IntakeCommand(robot, Intake.IntakeState.ON)
+                )
+        );
+
+        gp2.getGamepadButton(GamepadKeys.Button.A).whenReleased(
+                new ParallelCommandGroup(
+                        new KickerCommand(robot, Kicker.KickerState.OFF),
+                        new IntakeCommand(robot, Intake.IntakeState.OFF)
+                )
+        );
+
+        gp2.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
+                new ShooterCommand(robot, Shooter.ShooterState.REV)
+        );
+
+        gp2.getGamepadButton(GamepadKeys.Button.Y).whenReleased(
+                new ShooterCommand(robot, Shooter.ShooterState.STOP)
+        );
+
+        gp1.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                new InstantCommand(robot::holding)
+        );
+
+        gp1.getGamepadButton(GamepadKeys.Button.B).whenReleased(
+                new InstantCommand(robot::stopHolding)
+        );
+
         waitForStart();
 
         if(isStarted()){
