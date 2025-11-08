@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Kicker;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
@@ -35,7 +36,7 @@ public class Robot {
     DcMotorEx topShooterMotor, bottomShooterMotor;
     DcMotorEx intakeMotor;
     Servo hoodServo;
-    Servo turretLeftServo, turretRightServo;
+    Servo turretLeftServo, turretRightServo, BlockerServo;
     CRServo kickerRightServo;
 
     // all subsystem classes
@@ -44,6 +45,7 @@ public class Robot {
     public Shooter shooter;
     public Turret turret;
     public Kicker kicker;
+    public Blocker blocker;
 
     public Pose currentPose = new Pose(0, 0, 0);
     public boolean holding;
@@ -58,6 +60,7 @@ public class Robot {
         intakeMotor = hm.get(DcMotorEx.class, "intake");
         turretLeftServo = hm.get(Servo.class, "turretLeftServo");
         turretRightServo = hm.get(Servo.class, "turretRightServo");
+        BlockerServo = hm.get(Servo.class, "BlockerServo");
 //        hoodServo = hm.get(Servo.class, "hoodServo");
 //        kickerLeftServo = hm.get(CRServo.class, "kickerLeftServo");
         kickerRightServo = hm.get(CRServo.class, "kickerRightServo");
@@ -87,6 +90,7 @@ public class Robot {
         shooter = new Shooter(topShooterMotor, bottomShooterMotor, hoodServo);
         turret = new Turret(turretLeftServo, turretRightServo);
         kicker = new Kicker(kickerRightServo);
+        blocker = new Blocker(BlockerServo);
 
         //register subsystems
         CommandScheduler.getInstance().registerSubsystem(intake, shooter, turret); //kicker

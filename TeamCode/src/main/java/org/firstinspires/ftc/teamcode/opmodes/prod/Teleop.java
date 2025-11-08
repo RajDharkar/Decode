@@ -13,10 +13,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.KickerCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.ShooterCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.TurretCommand;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Kicker;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
@@ -49,15 +51,28 @@ public class Teleop extends LinearOpMode {
         leftTrig.whenInactive(new ShooterCommand(robot, Shooter.ShooterState.STOP));
         rightTrig.whenInactive(new ShooterCommand(robot, Shooter.ShooterState.STOP));
 
-        gp2.getGamepadButton(GamepadKeys.Button.B).whenPressed(new KickerCommand(robot, Kicker.KickerState.ON));
-        gp2.getGamepadButton(GamepadKeys.Button.B).whenReleased(new KickerCommand(robot, Kicker.KickerState.OFF));
+        gp2.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+                new ParallelCommandGroup(
+                    new KickerCommand(robot, Kicker.KickerState.ON),
+                    new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
+                )
+        );
+        gp2.getGamepadButton(GamepadKeys.Button.B).whenReleased(
+                new ParallelCommandGroup(
+                        new KickerCommand(robot, Kicker.KickerState.OFF),
+                        new BlockerCommand(robot, Blocker.BlockerState.BLOCKED)
+                ));
 
         gp2.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new TurretCommand(robot, Turret.TurretState.FRONT));
         gp2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new TurretCommand(robot, Turret.TurretState.BACK));
 
+
+
+
         gp2.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new ParallelCommandGroup(
                         new KickerCommand(robot, Kicker.KickerState.ON),
+                        new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED),
                         new IntakeCommand(robot, Intake.IntakeState.ON)
                 )
         );
@@ -65,6 +80,7 @@ public class Teleop extends LinearOpMode {
         gp2.getGamepadButton(GamepadKeys.Button.A).whenReleased(
                 new ParallelCommandGroup(
                         new KickerCommand(robot, Kicker.KickerState.OFF),
+                        new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
                         new IntakeCommand(robot, Intake.IntakeState.OFF)
                 )
         );

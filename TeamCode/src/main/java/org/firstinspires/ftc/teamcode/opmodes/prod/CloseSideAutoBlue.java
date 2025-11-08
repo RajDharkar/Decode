@@ -13,6 +13,7 @@ import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.util.DashboardPoseTracker;
 import com.pedropathing.util.Drawing;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,10 +21,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.commands.botcommands.FollowPathCommand;
+import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.KickerCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.ShooterCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.TurretCommand;
+import org.firstinspires.ftc.teamcode.robot.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Kicker;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
@@ -55,40 +58,58 @@ public class CloseSideAutoBlue extends LinearOpMode {
 
         paths = new CloseSideAutoPaths(robot.follower);
         SequentialCommandGroup auto = new SequentialCommandGroup(
+
             new ParallelCommandGroup(
                     new FollowPathCommand(robot.follower, paths.Path1),
+                    new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED),
                     new IntakeCommand(robot, Intake.IntakeState.ON),
                     new ShooterCommand(robot, Shooter.ShooterState.CLOSE),
                     new TurretCommand(robot, Turret.TurretState.FRONT)
             ),
             shootThree,
-            new FollowPathCommand(robot.follower, paths.Path2),
+            new ParallelCommandGroup(
+                    new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
+                    new FollowPathCommand(robot.follower, paths.Path2)
+            ),
             new WaitCommand(300),
             new ParallelCommandGroup(
                     new FollowPathCommand(robot.follower, paths.Path3),
                     new SequentialCommandGroup(
                             new WaitCommand(500),
-                            new ShooterCommand(robot, Shooter.ShooterState.CLOSE)
+                            new ShooterCommand(robot, Shooter.ShooterState.CLOSE),
+                            new WaitCommand(1000),
+                            new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
+
                     )
             ),
             shootThree,
-            new FollowPathCommand(robot.follower, paths.Path4),
+                new ParallelCommandGroup(
+                        new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
+                        new FollowPathCommand(robot.follower, paths.Path4)
+                ),
             new WaitCommand(300),
             new ParallelCommandGroup(
                 new FollowPathCommand(robot.follower, paths.Path5),
                 new SequentialCommandGroup(
                         new WaitCommand(500),
-                        new ShooterCommand(robot, Shooter.ShooterState.CLOSE)
+                        new ShooterCommand(robot, Shooter.ShooterState.CLOSE),
+                        new WaitCommand(1000),
+                        new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
                 )
             ),
             shootThree,
-            new FollowPathCommand(robot.follower, paths.Path6),
+                new ParallelCommandGroup(
+                        new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
+                        new FollowPathCommand(robot.follower, paths.Path6)
+                ),
             new WaitCommand(300),
             new ParallelCommandGroup(
                     new FollowPathCommand(robot.follower, paths.Path7),
                     new SequentialCommandGroup(
                             new WaitCommand(500),
-                            new ShooterCommand(robot, Shooter.ShooterState.CLOSE)
+                            new ShooterCommand(robot, Shooter.ShooterState.CLOSE),
+                            new WaitCommand(1000),
+                            new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
                     )
             ),
             shootThree
