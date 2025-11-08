@@ -56,6 +56,8 @@ public class Shooter implements Subsystem {
                 topShooter.setPower(-0.5);
                 bottomShooter.setPower(-0.5);
                 break;
+            case CLOSEAUTO:
+                setPIDPower(ShooterConstants.closeShootAutoRPM);
         }
     }
 
@@ -98,6 +100,6 @@ public class Shooter implements Subsystem {
     }
 
     public enum ShooterState {
-        CLOSE, FAR, STOP, TESTING, REV
+        CLOSE, FAR, STOP, TESTING, REV, CLOSEAUTO
     }
 }

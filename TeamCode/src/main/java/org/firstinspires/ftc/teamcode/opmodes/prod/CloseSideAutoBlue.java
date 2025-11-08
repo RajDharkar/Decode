@@ -51,7 +51,16 @@ public class CloseSideAutoBlue extends LinearOpMode {
 
         CommandGroupBase shootThree = new SequentialCommandGroup(
                 new KickerCommand(robot, Kicker.KickerState.ON),
-                new WaitCommand(3500),
+                new WaitCommand(15),
+                new KickerCommand(robot, Kicker.KickerState.OFF),
+                new WaitCommand(600),
+                new KickerCommand(robot, Kicker.KickerState.ON),
+                new WaitCommand(50),
+                new KickerCommand(robot, Kicker.KickerState.OFF),
+                new WaitCommand(250),
+                new KickerCommand(robot, Kicker.KickerState.ON),
+                new WaitCommand(1100),
+                new KickerCommand(robot, Kicker.KickerState.OFF),
                 new ShooterCommand(robot, Shooter.ShooterState.STOP),
                 new KickerCommand(robot, Kicker.KickerState.OFF)
         );
@@ -61,10 +70,13 @@ public class CloseSideAutoBlue extends LinearOpMode {
 
             new ParallelCommandGroup(
                     new FollowPathCommand(robot.follower, paths.Path1),
-                    new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED),
                     new IntakeCommand(robot, Intake.IntakeState.ON),
-                    new ShooterCommand(robot, Shooter.ShooterState.CLOSE),
-                    new TurretCommand(robot, Turret.TurretState.FRONT)
+                    new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
+                    new TurretCommand(robot, Turret.TurretState.FRONT),
+                    new SequentialCommandGroup(
+                        new WaitCommand(1500),
+                        new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
+                    )
             ),
             shootThree,
             new ParallelCommandGroup(
@@ -76,12 +88,13 @@ public class CloseSideAutoBlue extends LinearOpMode {
                     new FollowPathCommand(robot.follower, paths.Path3),
                     new SequentialCommandGroup(
                             new WaitCommand(500),
-                            new ShooterCommand(robot, Shooter.ShooterState.CLOSE),
+                            new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
                             new WaitCommand(1000),
-                            new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
+                        new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
 
                     )
             ),
+
             shootThree,
                 new ParallelCommandGroup(
                         new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
@@ -92,8 +105,8 @@ public class CloseSideAutoBlue extends LinearOpMode {
                 new FollowPathCommand(robot.follower, paths.Path5),
                 new SequentialCommandGroup(
                         new WaitCommand(500),
-                        new ShooterCommand(robot, Shooter.ShooterState.CLOSE),
-                        new WaitCommand(1000),
+                        new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
+                        new WaitCommand(1500),
                         new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
                 )
             ),
@@ -107,8 +120,8 @@ public class CloseSideAutoBlue extends LinearOpMode {
                     new FollowPathCommand(robot.follower, paths.Path7),
                     new SequentialCommandGroup(
                             new WaitCommand(500),
-                            new ShooterCommand(robot, Shooter.ShooterState.CLOSE),
-                            new WaitCommand(1000),
+                            new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
+                            new WaitCommand(2000),
                             new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
                     )
             ),
@@ -150,7 +163,7 @@ public class CloseSideAutoBlue extends LinearOpMode {
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(19.250, 123.000), new Pose(60, 84))
+                            new BezierLine(new Pose(19.250, 123.000), new Pose(65, 88))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(143), Math.toRadians(AutoConstants.shootingAngle))
                     .build();
@@ -159,7 +172,7 @@ public class CloseSideAutoBlue extends LinearOpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(60, 84.000),
+                                    new Pose(65, 88.000),
                                     new Pose(56.86, 78.80),
                                     new Pose(16.000, 84.000)
                             )
@@ -170,7 +183,7 @@ public class CloseSideAutoBlue extends LinearOpMode {
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(16.00, 84.000), new Pose(60, 84))
+                            new BezierLine(new Pose(16.00, 84.000), new Pose(65, 88))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(AutoConstants.shootingAngle))
                     .build();
@@ -179,7 +192,7 @@ public class CloseSideAutoBlue extends LinearOpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(60, 84),
+                                    new Pose(65, 88),
                                     new Pose(66, 52),
                                     new Pose(14.900, 60.000)
                             )
@@ -190,7 +203,7 @@ public class CloseSideAutoBlue extends LinearOpMode {
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(14.900, 60.000), new Pose(60, 84))
+                            new BezierLine(new Pose(14.900, 60.000), new Pose(65, 88))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(AutoConstants.shootingAngle))
                     .build();
@@ -199,7 +212,7 @@ public class CloseSideAutoBlue extends LinearOpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(60, 84),
+                                    new Pose(65, 88),
                                     new Pose(87, 31),
                                     new Pose(15.000, 36.000)
                             )
@@ -210,7 +223,7 @@ public class CloseSideAutoBlue extends LinearOpMode {
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(15.000, 36.000), new Pose(60, 84))
+                            new BezierLine(new Pose(15.000, 36.000), new Pose(65, 88))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(AutoConstants.shootingAngle))
                     .build();
