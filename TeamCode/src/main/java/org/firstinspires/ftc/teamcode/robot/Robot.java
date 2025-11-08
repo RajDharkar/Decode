@@ -36,7 +36,7 @@ public class Robot {
     DcMotorEx topShooterMotor, bottomShooterMotor;
     DcMotorEx intakeMotor;
     Servo hoodServo;
-    Servo turretLeftServo, turretRightServo, BlockerServo;
+    Servo turretLeftServo, turretRightServo, blockerServo;
     CRServo kickerRightServo;
 
     // all subsystem classes
@@ -60,7 +60,7 @@ public class Robot {
         intakeMotor = hm.get(DcMotorEx.class, "intake");
         turretLeftServo = hm.get(Servo.class, "turretLeftServo");
         turretRightServo = hm.get(Servo.class, "turretRightServo");
-        BlockerServo = hm.get(Servo.class, "BlockerServo");
+        blockerServo = hm.get(Servo.class, "BlockerServo");
 //        hoodServo = hm.get(Servo.class, "hoodServo");
 //        kickerLeftServo = hm.get(CRServo.class, "kickerLeftServo");
         kickerRightServo = hm.get(CRServo.class, "kickerRightServo");
@@ -90,7 +90,7 @@ public class Robot {
         shooter = new Shooter(topShooterMotor, bottomShooterMotor, hoodServo);
         turret = new Turret(turretLeftServo, turretRightServo);
         kicker = new Kicker(kickerRightServo);
-        blocker = new Blocker(BlockerServo);
+        blocker = new Blocker(blockerServo);
 
         //register subsystems
         CommandScheduler.getInstance().registerSubsystem(intake, shooter, turret); //kicker
