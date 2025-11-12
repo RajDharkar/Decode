@@ -1,8 +1,18 @@
 package org.firstinspires.ftc.teamcode.opmodes.prod;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants.firstIntakeX;
+import static org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants.firstWait;
+import static org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants.intakeBallWait;
+import static org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants.secondIntakeX;
+import static org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants.secondWait;
+import static org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants.shootingX;
+import static org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants.shootingY;
+import static org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants.thirdWait;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandGroupBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -21,6 +31,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.commands.botcommands.FollowPathCommand;
+import org.firstinspires.ftc.teamcode.robot.commands.botcommands.TransferCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.KickerCommand;
@@ -33,13 +44,12 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
-@Autonomous
+@Autonomous(name = "Close Side Auto Blue", group = "Prod")
 @Config
-public class CloseSideAutoBlue extends LinearOpMode {
+public class CloseAutoBlue extends LinearOpMode {
     public ElapsedTime timer;
     private DashboardPoseTracker dashboardPoseTracker;
     Robot robot;
-
     private CloseSideAutoPaths paths;
 
     @Override
@@ -48,85 +58,58 @@ public class CloseSideAutoBlue extends LinearOpMode {
         timer.reset();
         MyTelem.init(telemetry);
         robot = new Robot(hardwareMap, true);
+        CommandScheduler.getInstance().schedule(
+                new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
+                new TurretCommand(robot, Turret.TurretState.FRONT)
+        );
+        CommandGroupBase transferCommand = new SequentialCommandGroup(
+                new IntakeCommand(robot, Intake.IntakeState.OFF),
+                new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED),
+                new WaitCommand(firstWait),
+                new KickerCommand(robot, Kicker.KickerState.ON),
+                new WaitCommand(secondWait),
+                new IntakeCommand(robot, Intake.IntakeState.ON),
+                new WaitCommand(thirdWait),
+                new ShooterCommand(robot, Shooter.ShooterState.STOP),
+                new KickerCommand(robot, Kicker.KickerState.OFF),
+                new BlockerCommand(robot, Blocker.BlockerState.BLOCKED)
+        );
 
         CommandGroupBase shootThree = new SequentialCommandGroup(
-                new KickerCommand(robot, Kicker.KickerState.ON),
-                new WaitCommand(15),
-                new KickerCommand(robot, Kicker.KickerState.OFF),
-                new WaitCommand(600),
-                new KickerCommand(robot, Kicker.KickerState.ON),
-                new WaitCommand(50),
-                new KickerCommand(robot, Kicker.KickerState.OFF),
-                new WaitCommand(250),
-                new KickerCommand(robot, Kicker.KickerState.ON),
-                new WaitCommand(1100),
-                new KickerCommand(robot, Kicker.KickerState.OFF),
-                new ShooterCommand(robot, Shooter.ShooterState.STOP),
-                new KickerCommand(robot, Kicker.KickerState.OFF)
+                transferCommand
         );
 
         paths = new CloseSideAutoPaths(robot.follower);
         SequentialCommandGroup auto = new SequentialCommandGroup(
-
-            new ParallelCommandGroup(
-                    new FollowPathCommand(robot.follower, paths.Path1),
-                    new IntakeCommand(robot, Intake.IntakeState.ON),
-                    new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
-                    new TurretCommand(robot, Turret.TurretState.FRONT),
-                    new SequentialCommandGroup(
-                        new WaitCommand(1500),
-                        new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
-                    )
-            ),
-            shootThree,
-            new ParallelCommandGroup(
-                    new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
-                    new FollowPathCommand(robot.follower, paths.Path2)
-            ),
-            new WaitCommand(300),
-            new ParallelCommandGroup(
-                    new FollowPathCommand(robot.follower, paths.Path3),
-                    new SequentialCommandGroup(
-                            new WaitCommand(500),
-                            new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
-                            new WaitCommand(1000),
-                        new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
-
-                    )
-            ),
-
-            shootThree,
-                new ParallelCommandGroup(
-                        new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
-                        new FollowPathCommand(robot.follower, paths.Path4)
-                ),
-            new WaitCommand(300),
-            new ParallelCommandGroup(
+                new FollowPathCommand(robot.follower, paths.Path1),
+                new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
+                shootThree,
+                new FollowPathCommand(robot.follower, paths.Path2),
+                new WaitCommand(intakeBallWait),
+                new FollowPathCommand(robot.follower, paths.Path3),
+                new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
+                shootThree,
+                new FollowPathCommand(robot.follower, paths.Path4),
+                new WaitCommand(intakeBallWait),
                 new FollowPathCommand(robot.follower, paths.Path5),
-                new SequentialCommandGroup(
-                        new WaitCommand(500),
-                        new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
-                        new WaitCommand(1500),
-                        new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
+                new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
+                shootThree,
+                new FollowPathCommand(robot.follower, paths.Path6),
+                new WaitCommand(intakeBallWait),
+                new FollowPathCommand(robot.follower, paths.Path7),
+                new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
+                shootThree,
+                new FollowPathCommand(robot.follower,
+                        robot.follower.pathBuilder().addPath(
+                                        new BezierLine(
+                                                new Pose(robot.follower.getPose().getX(), robot.follower.getPose().getY()),
+                                                new Pose(51.962716378162455, 70.17842876165113)
+                                        )
+                                ).setConstantHeadingInterpolation(robot.follower.getPose().getHeading())
+                                .build()
                 )
-            ),
-            shootThree,
-                new ParallelCommandGroup(
-                        new BlockerCommand(robot, Blocker.BlockerState.BLOCKED),
-                        new FollowPathCommand(robot.follower, paths.Path6)
-                ),
-            new WaitCommand(300),
-            new ParallelCommandGroup(
-                    new FollowPathCommand(robot.follower, paths.Path7),
-                    new SequentialCommandGroup(
-                            new WaitCommand(500),
-                            new ShooterCommand(robot, Shooter.ShooterState.CLOSEAUTO),
-                            new WaitCommand(2000),
-                            new BlockerCommand(robot, Blocker.BlockerState.UNBLOCKED)
-                    )
-            ),
-            shootThree
         );
+
 
         dashboardPoseTracker = new DashboardPoseTracker(robot.follower.poseUpdater);
         Drawing.drawRobot(robot.follower.poseUpdater.getPose(), "#4CAF50");
@@ -145,6 +128,7 @@ public class CloseSideAutoBlue extends LinearOpMode {
             Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
             Drawing.drawRobot(robot.follower.poseUpdater.getPose(), "#4CAF50");
             Drawing.sendPacket();
+            AutoConstants.finalPose = robot.follower.getPose();
         }
         robot.stop();
     }
@@ -159,11 +143,11 @@ public class CloseSideAutoBlue extends LinearOpMode {
         public PathChain Path7;
 
         public CloseSideAutoPaths(Follower follower) {
-            follower.setStartingPose(new Pose(23.9, 123.400, Math.toRadians(143)));
+            follower.setStartingPose(new Pose(19.250, 123.000, Math.toRadians(143)));
             Path1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(19.250, 123.000), new Pose(65, 88))
+                            new BezierLine(new Pose(19.250, 123.000), new Pose(shootingX, shootingY))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(143), Math.toRadians(AutoConstants.shootingAngle))
                     .build();
@@ -172,18 +156,19 @@ public class CloseSideAutoBlue extends LinearOpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(65, 88.000),
+                                    new Pose(shootingX, shootingY),
                                     new Pose(56.86, 78.80),
-                                    new Pose(16.000, 84.000)
+                                    new Pose(firstIntakeX, 84.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(AutoConstants.shootingAngle), Math.toRadians(180))
+                    .setZeroPowerAccelerationMultiplier(2)
                     .build();
 
             Path3 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(16.00, 84.000), new Pose(65, 88))
+                            new BezierLine(new Pose(firstIntakeX, 84.000), new Pose(shootingX, shootingY))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(AutoConstants.shootingAngle))
                     .build();
@@ -192,18 +177,19 @@ public class CloseSideAutoBlue extends LinearOpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(65, 88),
+                                    new Pose(shootingX, shootingY),
                                     new Pose(66, 52),
-                                    new Pose(14.900, 60.000)
+                                    new Pose(secondIntakeX, 60.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(AutoConstants.shootingAngle), Math.toRadians(180))
+                    .setZeroPowerAccelerationMultiplier(2)
                     .build();
 
             Path5 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(14.900, 60.000), new Pose(65, 88))
+                            new BezierLine(new Pose(secondIntakeX, 60.000), new Pose(shootingX, shootingY))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(AutoConstants.shootingAngle))
                     .build();
@@ -212,18 +198,19 @@ public class CloseSideAutoBlue extends LinearOpMode {
                     .pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(65, 88),
+                                    new Pose(shootingX, shootingY),
                                     new Pose(87, 31),
-                                    new Pose(15.000, 36.000)
+                                    new Pose(secondIntakeX, 36.000)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(AutoConstants.shootingAngle), Math.toRadians(180))
+                    .setZeroPowerAccelerationMultiplier(2)
                     .build();
 
             Path7 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(15.000, 36.000), new Pose(65, 88))
+                            new BezierLine(new Pose(secondIntakeX, 36.000), new Pose(shootingX, shootingY))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(AutoConstants.shootingAngle))
                     .build();

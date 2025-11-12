@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.prod;
 
-import androidx.core.view.accessibility.AccessibilityViewCommand;
-
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -12,7 +10,11 @@ import com.pedropathing.localization.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.robot.Robot;
+import org.firstinspires.ftc.teamcode.robot.commands.botcommands.MoveToCloseShootCommand;
+import org.firstinspires.ftc.teamcode.robot.commands.botcommands.TransferCancelCommand;
+import org.firstinspires.ftc.teamcode.robot.commands.botcommands.TransferCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.BlockerCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.robot.commands.subsystemcommands.KickerCommand;
@@ -25,15 +27,14 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
-@TeleOp(name = "Teleop", group = "Comp")
-public class Teleop extends LinearOpMode {
-    Pose currentPose = new Pose(0, 0, 0);
+@TeleOp(name = "Teleop Red", group = "Comp")
+public class TeleopRed extends LinearOpMode {
+    Pose currentPose = AutoConstants.finalPose;
 
     @Override
     public void runOpMode() {
         MyTelem.init(telemetry);
-        Robot robot = new Robot(hardwareMap, false);
-        robot.follower.setStartingPose(currentPose);
+        Robot robot = new Robot(hardwareMap, false, "BLUE");
         GamepadEx gp1 = new GamepadEx(gamepad1);
         GamepadEx gp2 = new GamepadEx(gamepad2);
 
@@ -67,7 +68,20 @@ public class Teleop extends LinearOpMode {
         gp2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new TurretCommand(robot, Turret.TurretState.BACK));
 
 
+        gp2.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
+                new TransferCommand(robot, true)
+        );
 
+        gp2.getGamepadButton(GamepadKeys.Button.Y).whenReleased(
+                new TransferCancelCommand(robot)
+        );
+
+        gp2.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+                new TransferCommand(robot, false)
+        );
+        gp2.getGamepadButton(GamepadKeys.Button.X).whenReleased(
+                new TransferCancelCommand(robot)
+        );
 
         gp2.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new ParallelCommandGroup(
@@ -85,14 +99,6 @@ public class Teleop extends LinearOpMode {
                 )
         );
 
-        gp2.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-                new ShooterCommand(robot, Shooter.ShooterState.REV)
-        );
-
-        gp2.getGamepadButton(GamepadKeys.Button.Y).whenReleased(
-                new ShooterCommand(robot, Shooter.ShooterState.STOP)
-        );
-
         gp1.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                 new InstantCommand(robot::holding)
         );
@@ -101,6 +107,14 @@ public class Teleop extends LinearOpMode {
                 new InstantCommand(robot::stopHolding)
         );
 
+//        gp1.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+//                new MoveToCloseShootCommand(robot)
+//        );
+//
+//        gp1.getGamepadButton(GamepadKeys.Button.A).whenReleased(
+//                new InstantCommand(robot::stopHolding)
+//        );
+        CommandScheduler.getInstance().schedule(new BlockerCommand(robot, Blocker.BlockerState.BLOCKED));
         waitForStart();
 
         if(isStarted()){

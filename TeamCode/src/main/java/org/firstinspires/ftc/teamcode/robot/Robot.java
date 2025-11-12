@@ -13,7 +13,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Blocker;
@@ -24,6 +26,7 @@ import org.firstinspires.ftc.teamcode.robot.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Config
 public class Robot {
@@ -47,14 +50,25 @@ public class Robot {
     public Kicker kicker;
     public Blocker blocker;
 
-    public Pose currentPose = new Pose(0, 0, 0);
+    public Pose currentPose;
     public boolean holding;
+    public boolean red;
+    public static double voltage = 12;
+    private ElapsedTime timer;
+    private double previousVoltageTime;
+    public Robot(HardwareMap hm, boolean isAuto, String color){
+        this(hm, isAuto);
+        red = color.equals("RED");
+    }
     public Robot (HardwareMap hm, boolean isAuto) {
+        timer.reset();
+        previousVoltageTime = timer.time(TimeUnit.MILLISECONDS);
         CommandScheduler.getInstance().reset();
         auto = isAuto;
         follower = new Follower(hm, FConstants.class, LConstants.class);
 //        follower.breakFollowing();
-        currentPose = new Pose(0, 0,  0);
+        currentPose = AutoConstants.finalPose;
+        follower.setStartingPose(currentPose);
         topShooterMotor = hm.get(DcMotorEx.class, "topShooter");
         bottomShooterMotor = hm.get(DcMotorEx.class, "bottomShooter");
         intakeMotor = hm.get(DcMotorEx.class, "intake");
@@ -99,6 +113,8 @@ public class Robot {
         for (LynxModule hub : hubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
+
+        voltage = hm.voltageSensor.iterator().next().getVoltage();
     }
 
     public void update(){
@@ -120,6 +136,12 @@ public class Robot {
 
         if(!holding)
             currentPose = follower.getPose();
+
+        if(timer.time(TimeUnit.MILLISECONDS) - previousVoltageTime > 1000){
+            previousVoltageTime = timer.time(TimeUnit.MILLISECONDS);
+            voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+        }
+        MyTelem.addData("Current Pose", currentPose);
         MyTelem.update();
     }
 
