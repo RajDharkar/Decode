@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.utils.constants.IntakeConstants;
 
 public class Blocker implements Subsystem {
     public BlockerState state;
-    public Servo BlockerServo;
+    public Servo blockerServo;
 
-    public Blocker(Servo BlockerServo) {
-        this.BlockerServo = BlockerServo;
+    public Blocker(Servo blockerServo) {
+        this.blockerServo = blockerServo;
         state = BlockerState.BLOCKED;
     }
 
@@ -21,13 +21,13 @@ public class Blocker implements Subsystem {
         this.state = state;
         switch (state){
             case BLOCKED:
-                BlockerServo.setPosition(BlockerConstants.Blocked);
+                blockerServo.setPosition(BlockerConstants.Blocked);
                 break;
             case UNBLOCKED:
-                BlockerServo.setPosition(BlockerConstants.Unblocked);
+                blockerServo.setPosition(BlockerConstants.Unblocked);
                 break;
             default:
-                BlockerServo.setPosition(BlockerConstants.Blocked);
+                blockerServo.setPosition(BlockerConstants.Blocked);
                 break;
         }
     }

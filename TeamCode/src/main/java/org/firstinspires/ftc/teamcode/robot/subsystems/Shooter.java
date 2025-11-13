@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.robot.calculations.ShooterCalculations;
 import org.firstinspires.ftc.teamcode.robot.calculations.ShooterInput;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
@@ -70,15 +71,17 @@ public class Shooter implements Subsystem {
     public void setPIDPower(double targetRPM){
         double topVelocity = Math.abs(topShooter.getVelocity());
 
-        double currentRPM = (ticksPerSecToRPM(topVelocity)) / 2;
+        double currentRPM = (ticksPerSecToRPM(topVelocity));
         MyTelem.addData("Shooter Current RPM", currentRPM);
         rpmPID.setPID(ShooterConstants.kp, ShooterConstants.ki, ShooterConstants.kd);
         double power = rpmPID.calculate(currentRPM, targetRPM);
         power += (targetRPM > 0) ? (ShooterConstants.kf * (targetRPM / ShooterConstants.MAX_RPM)) : 0.0;
         power = Range.clip(power, 0, 1);
-        MyTelem.addData("Power", power);
-        topShooter.setPower(power);
-        bottomShooter.setPower(power);
+        double currentVoltage = Robot.voltage;
+        MyTelem.addData("Power without voltage modifier", power);
+        MyTelem.addData("Power with voltage modifier", power * 12.0 / currentVoltage);
+        topShooter.setPower(power * 12.0 / currentVoltage);
+        bottomShooter.setPower(power * 12.0 / currentVoltage);
     }
 
     public boolean atRPM(){
