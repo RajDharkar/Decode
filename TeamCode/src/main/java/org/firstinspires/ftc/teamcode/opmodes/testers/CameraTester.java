@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.utils.MyTelem;
+import org.firstinspires.ftc.teamcode.utils.constants.CameraConstants;
 import org.firstinspires.ftc.teamcode.utils.constants.ShooterConstants;
 import org.firstinspires.ftc.teamcode.utils.constants.TurretConstants;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -20,14 +21,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 @TeleOp(name = "AprilTag Detector", group = "Vision")
-public class Camera extends LinearOpMode {
+public class CameraTester extends LinearOpMode {
 
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTagProcessor;
     private WebcamName camera;
     public static Boolean blue, red;
-    public static int blueID, redID;
-    public static double p,i,d;
     public Servo turretLeftServo, turretRightServo;
     PIDController turretPID;
 
@@ -45,9 +44,9 @@ public class Camera extends LinearOpMode {
     @Override
     public void runOpMode() {
         blue = true;
-        turretPID = new PIDController(p, i, d);
+        turretPID = new PIDController(CameraConstants.p, CameraConstants.i, CameraConstants.d);
         MyTelem.init(telemetry);
-        initAprilTagProccessor(aprilTagProcessor, camera);
+        initAprilTagProccessor(aprilTagProcessor, camera, CameraConstants.camaeraSizeX, CameraConstants.camaeraSizeY);
         turretLeftServo = hardwareMap.get(Servo.class, "turretLeftServo");
         turretRightServo = hardwareMap.get(Servo.class, "turretRightServo");
         camera = hardwareMap.get(WebcamName.class, "cameraOne");
@@ -81,9 +80,9 @@ public class Camera extends LinearOpMode {
                     MyTelem.addData("Pose Z", z);
                     MyTelem.addData("Dist: ", detection.ftcPose.range);
                     MyTelem.addData("Elevation: ", detection.ftcPose.elevation);
-                    if(blue && detection.id == blueID){
+                    if(blue && detection.id == CameraConstants.blueID){
                         MyTelem.addData("detecting blue", "");
-                        turretPID.setPID(p,i,d);
+                        turretPID.setPID(CameraConstants.p,CameraConstants.i,CameraConstants.d);
                         double correction = turretPID.calculate(x,0);
                         correction = Range.clip(getTurretPostition()+correction, 0, 1);
                         setTurretPostition(correction);
@@ -97,7 +96,7 @@ public class Camera extends LinearOpMode {
         visionPortal.close();
     }
 
-    public void initAprilTagProccessor(AprilTagProcessor processor, WebcamName camera) {
+    public void initAprilTagProccessor(AprilTagProcessor processor, WebcamName camera, int x, int y) {
         processor = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setDrawTagID(true)
@@ -108,7 +107,7 @@ public class Camera extends LinearOpMode {
         visionPortal = new VisionPortal.Builder()
                 .setCamera(camera)
                 .addProcessor(processor)
-                .setCameraResolution(new Size(640,480))
+                .setCameraResolution(new Size(x,y))
                 .build();
     }
 
